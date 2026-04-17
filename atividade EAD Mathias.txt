@@ -1,0 +1,85 @@
+CREATE TABLE clientes (
+    id INTEGER PRIMARY KEY,
+    nome TEXT,
+    email TEXT,
+    cidade TEXT
+);
+
+CREATE TABLE produtos (
+    id INTEGER PRIMARY KEY,
+    nome TEXT,
+    preco REAL,
+    estoque INTEGER
+);
+
+CREATE TABLE pedidos (
+    id INTEGER PRIMARY KEY,
+    cliente_id INTEGER,
+    produto_id INTEGER,
+    quantidade INTEGER
+);
+
+INSERT INTO clientes (id, nome, email, cidade) VALUES
+(1, 'João Silva', 'joao@gmail.com', 'São Paulo'),
+(2, 'Maria Souza', 'maria@gmail.com', 'Rio de Janeiro'),
+(3, 'Carlos Lima', 'carlos@gmail.com', 'Belo Horizonte'),
+(4, 'Ana Costa', 'ana@gmail.com', 'Curitiba'),
+(5, 'Pedro Rocha', 'pedro@gmail.com', 'Porto Alegre');
+INSERT INTO produtos (id, nome, preco, estoque) VALUES
+(1, 'Notebook', 3500.00, 10),
+(2, 'Mouse', 80.00, 50),
+(3, 'Teclado', 150.00, 30),
+(4, 'Monitor', 1200.00, 15),
+(5, 'Headset', 200.00, 25);
+INSERT INTO pedidos (id, cliente_id, produto_id, quantidade) VALUES
+(1, 1, 1, 1),
+(2, 2, 2, 2),
+(3, 3, 3, 1),
+(4, 1, 4, 1),
+(5, 4, 5, 3),
+(6, 5, 1, 1),
+(7, 2, 3, 2),
+(8, 3, 2, 1);
+SELECT * FROM clientes;
+SELECT * 
+FROM produtos
+WHERE preco > 1000;
+SELECT *
+FROM produtos
+WHERE estoque < 5;
+SELECT * FROM pedidos;
+SELECT nome, email
+FROM clientes;
+SELECT 
+    C.nome,
+    COUNT(P.id) AS quantidade_pedidos
+FROM clientes C
+LEFT JOIN pedidos P ON C.id = P.cliente_id
+GROUP BY C.nome;
+SELECT 
+    C.nome AS cliente,
+    PR.nome AS produto,
+    P.quantidade
+FROM pedidos P
+JOIN clientes C ON P.cliente_id = C.id
+JOIN produtos PR ON P.produto_id = PR.id;
+SELECT 
+    C.nome,
+    SUM(PR.preco * P.quantidade) AS total_gasto
+FROM pedidos P
+JOIN clientes C ON P.cliente_id = C.id
+JOIN produtos PR ON P.produto_id = PR.id
+GROUP BY C.nome;
+SELECT 
+    PR.nome
+FROM produtos PR
+LEFT JOIN pedidos P ON PR.id = P.produto_id
+WHERE P.id IS NULL;
+SELECT 
+    C.nome,
+    COUNT(P.id) AS total_pedidos
+FROM pedidos P
+JOIN clientes C ON P.cliente_id = C.id
+GROUP BY C.nome
+ORDER BY total_pedidos DESC
+LIMIT 1;
